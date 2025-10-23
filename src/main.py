@@ -1,9 +1,10 @@
+import asyncio
 import csv
 import logging
 from pathlib import Path
 from random import SystemRandom
 
-from patchright.sync_api import sync_playwright
+from patchright.async_api import async_playwright
 from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
@@ -22,39 +23,40 @@ async def fill_form(page, data: dict[str, str]):
 
     # Fill in the form fields
     for key, value in data.items():
-        page.fill(f"#form-{key}", value)
+        await page.locator(f"#form-{key}").fill(value)
 
     wait_time = cryptogen.randint(500, 3000)
     await page.wait_for_timeout(wait_time)
 
     # Submit the form
-    page.click("[type=submit]")
+    await page.locator("[type=submit]").click()
 
     error_element = page.locator("#error_message")
-    style_attr = error_element.get_attribute("style")
+    style_attr = await error_element.get_attribute("style")
     if style_attr and "display: list-item;" in style_attr:
-        logger.warning(f"Error message appeared: {error_element.text_content()}")
+        logger.warning("Error message appeared: %s", await error_element.text_content())
     else:
         logger.debug("No error message appeared")
 
 
 async def main():
-    csv_path = input("What's the path to the CSV file?")
+    csv_path = input("What's the path to the CSV file? ")
     action_type = "petition"
-    action_name = input("What's the name of the petition? (The part after 'actionnetwork.org/petitions/')")
-    source_tag = input("What source tag should be used? (Such as 'paper')")
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
-        page = browser.new_page()
+    action_name = input("What's the name of the petition? (The part after 'actionnetwork.org/petitions/') ")
+    source_tag = input("What source tag should be used? (Such as 'paper') ")
+
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=False)
+        page = await browser.new_page()
 
         with Path(csv_path).open() as file:
             csv_reader = csv.DictReader(file)
             for signer in tqdm(csv_reader):
-                page.goto(f"https://actionnetwork.org/{action_type}s/{action_name}?kiosk=true&source={source_tag}")
+                await page.goto(f"https://actionnetwork.org/{action_type}s/{action_name}?kiosk=true&source={source_tag}")
                 await fill_form(page, signer)
 
-        browser.close()
+        await browser.close()
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
