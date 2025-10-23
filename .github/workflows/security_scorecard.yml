@@ -1,0 +1,46 @@
+# This workflow uses actions that are not certified by GitHub. They are provided
+# by a third-party and are governed by separate terms of service, privacy
+# policy, and support documentation.
+
+name: Scorecard supply-chain security
+
+on:
+  branch_protection_rule:
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '45 16 * * 2'
+
+# Declare default permissions as read only.
+permissions: read-all
+
+jobs:
+  analysis:
+    name: Scorecard analysis
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      security-events: write
+      id-token: write
+
+    steps:
+      - uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a
+        with:
+          disable-sudo: true
+          egress-policy: audit
+
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        with:
+          persist-credentials: false
+
+      - uses: ossf/scorecard-action@f49aabe0b5af0936a0987cfb85d86b75731b0186
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          publish_results: true
+
+      - uses: github/codeql-action/upload-sarif@192325c86100d080feab897ff886c34abd4c83a3
+        with:
+          sarif_file: results.sarif
