@@ -40,7 +40,8 @@ async def fill_form(page, data: dict[str, str]):
 
 async def main():
     csv_path = input("What's the path to the CSV file?")
-    petition_name = input("What's the name of the petition? (The part after 'actionnetwork.org/petitions/')")
+    action_type = "petition"
+    action_name = input("What's the name of the petition? (The part after 'actionnetwork.org/petitions/')")
     source_tag = input("What source tag should be used? (Such as 'paper')")
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)
@@ -49,7 +50,7 @@ async def main():
         with Path(csv_path).open() as file:
             csv_reader = csv.DictReader(file)
             for signer in tqdm(csv_reader):
-                page.goto(f"https://actionnetwork.org/petitions/{petition_name}?kiosk=true&source={source_tag}")
+                page.goto(f"https://actionnetwork.org/{action_type}s/{action_name}?kiosk=true&source={source_tag}")
                 await fill_form(page, signer)
 
         browser.close()
