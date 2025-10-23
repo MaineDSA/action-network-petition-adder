@@ -1,6 +1,7 @@
 import asyncio
 import csv
 import logging
+from enum import Enum
 from pathlib import Path
 from random import SystemRandom
 
@@ -11,6 +12,11 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 cryptogen = SystemRandom()
+
+
+class ActionType(Enum):
+    PETITION = "petition"
+    FORM = "form"
 
 
 async def fill_form(page, data: dict[str, str]):
@@ -41,7 +47,6 @@ async def fill_form(page, data: dict[str, str]):
 
 async def main():
     csv_path = input("What's the path to the CSV file? ")
-    action_type = "petition"
     action_name = input("What's the name of the petition? (The part after 'actionnetwork.org/petitions/') ")
     source_tag = input("What source tag should be used? (Such as 'paper') ")
 
@@ -52,7 +57,7 @@ async def main():
         with Path(csv_path).open() as file:
             csv_reader = csv.DictReader(file)
             for signer in tqdm(csv_reader):
-                await page.goto(f"https://actionnetwork.org/{action_type}s/{action_name}?kiosk=true&source={source_tag}")
+                await page.goto(f"https://actionnetwork.org/{ActionType.PETITION}s/{action_name}?kiosk=true&source={source_tag}")
                 await fill_form(page, signer)
 
         await browser.close()
