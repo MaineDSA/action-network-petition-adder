@@ -1,3 +1,5 @@
+"""Add signers from a CSV to an Action Network action via browser automation and kiosk mode."""
+
 import asyncio
 import logging
 from csv import DictReader
@@ -42,6 +44,10 @@ async def fill_form(page, data: dict[str, str]):
 
 
 async def get_inputs() -> tuple[Path, str, str]:
+    """
+    Collect path, action name, and source tag via user input.
+    """
+
     csv_path = input("What's the path to the CSV file? ")
     action_name = input("What's the name of the petition? (The part after 'actionnetwork.org/petitions/') ")
     source_tag = input("What source tag should be used? (Such as 'paper') ")
@@ -49,6 +55,9 @@ async def get_inputs() -> tuple[Path, str, str]:
 
 
 async def get_signers_from_csv(csv_path: Path) -> list[dict[str, str]]:
+    """
+    Load signer data from CSV and return it as a list of dicts.
+    """
     with csv_path.open() as file:
         signers = list(DictReader(file))
     return signers
