@@ -64,13 +64,13 @@ async def get_signers_from_csv(csv_path: Path) -> list[dict[str, str]]:
 
 
 async def main():
-    csv_path, action_name, source_tag = get_inputs()
+    csv_path, action_name, source_tag = await get_inputs()
 
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=False)
         page = await browser.new_page()
 
-        signers = get_signers_from_csv(csv_path)
+        signers = await get_signers_from_csv(csv_path)
         for signer in tqdm(signers, unit="signer"):
             action_url = f"https://actionnetwork.org/{ActionType.PETITION}s/{action_name}?kiosk=true"
             if source_tag:
