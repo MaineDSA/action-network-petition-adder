@@ -15,7 +15,7 @@ async def test_fill_form():
             "**/actionnetwork.org/**",
             lambda route: route.fulfill(
                 status=200,
-                body=(Path(__file__).parent / "petition_form.html").read_text(),
+                body=(Path(__file__).parent / "test_resources/petition_form.html").read_text(),
             ),
         )
 
