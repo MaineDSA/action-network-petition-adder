@@ -21,10 +21,7 @@ class ActionType(Enum):
 
 async def fill_form(page, data: dict[str, str]):
     """
-    Fill form fields at provided action network url with provided data.
-
-    Args:
-    data (dict): Dictionary containing form data based on field ids:
+    Fill form fields at provided action network page with provided data.
     """
 
     # Fill in the form fields
@@ -34,7 +31,6 @@ async def fill_form(page, data: dict[str, str]):
     wait_time = cryptogen.randint(500, 3000)
     await page.wait_for_timeout(wait_time)
 
-    # Submit the form
     await page.locator("[type=submit]").click()
 
     error_element = page.locator("#error_message")
