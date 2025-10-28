@@ -16,6 +16,6 @@ async def test_get_inputs():
     with patch("builtins.input", side_effect=[known_csv_path, known_action_name, known_source_tag]):
         csv_path, action_name, source_tag = await get_inputs()
 
-        assert csv_path == csv_path
+        assert csv_path == known_csv_path
         assert action_name == known_action_name
         assert source_tag == known_source_tag
