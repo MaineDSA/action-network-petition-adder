@@ -62,7 +62,7 @@ async def main():
         page = await browser.new_page()
 
         signers = get_signers_from_csv(csv_path)
-        for signer in tqdm(signers):
+        for signer in tqdm(signers, unit="signer"):
             action_url = f"https://actionnetwork.org/{ActionType.PETITION}s/{action_name}?kiosk=true"
             if source_tag:
                 action_url = f"{action_url}&source={source_tag}"
