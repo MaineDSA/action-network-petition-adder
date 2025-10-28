@@ -3,7 +3,7 @@ from pathlib import Path
 from src.main import get_signers_from_csv
 
 
-async def test_load_signers():
+async def test_load_signers() -> None:
     signers = await get_signers_from_csv(Path(__file__).parent / "test_resources/example.csv")
 
     assert signers[0]["first_name"] == "Eugene"

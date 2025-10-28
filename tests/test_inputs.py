@@ -7,7 +7,7 @@ from src.main import get_inputs
 
 
 @pytest.mark.asyncio
-async def test_get_inputs():
+async def test_get_inputs() -> None:
     known_csv_path = Path(__file__).parent / "test_resources/example.csv"
     known_action_name = "my-petition"
     known_source_tag = "paper"

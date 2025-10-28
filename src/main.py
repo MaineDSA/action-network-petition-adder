@@ -7,7 +7,7 @@ from enum import Enum
 from pathlib import Path
 from random import SystemRandom
 
-from patchright.async_api import async_playwright
+from patchright.async_api import Page, async_playwright
 from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
@@ -17,15 +17,14 @@ cryptogen = SystemRandom()
 
 
 class ActionType(Enum):
+    """Supported Action Network Action Types."""
+
     PETITION = "petition"
     FORM = "form"
 
 
-async def fill_form(page, data: dict[str, str]):
-    """
-    Fill form fields at provided action network page with provided data.
-    """
-
+async def fill_form(page: Page, data: dict[str, str]) -> None:
+    """Fill form fields at provided action network page with provided data."""
     # Fill in the form fields
     for key, value in data.items():
         await page.locator(f"#form-{key}").fill(value)
@@ -44,10 +43,7 @@ async def fill_form(page, data: dict[str, str]):
 
 
 async def get_inputs() -> tuple[Path, str, str]:
-    """
-    Collect path, action name, and source tag via user input.
-    """
-
+    """Collect path, action name, and source tag via user input."""
     csv_path = input("What's the path to the CSV file? ")
     action_name = input("What's the name of the petition? (The part after 'actionnetwork.org/petitions/') ")
     source_tag = input("What source tag should be used? (Such as 'paper') ")
@@ -55,15 +51,12 @@ async def get_inputs() -> tuple[Path, str, str]:
 
 
 async def get_signers_from_csv(csv_path: Path) -> list[dict[str, str]]:
-    """
-    Load signer data from CSV and return it as a list of dicts.
-    """
+    """Load signer data from CSV and return it as a list of dicts."""
     with csv_path.open() as file:
-        signers = list(DictReader(file))
-    return signers
+        return list(DictReader(file))
 
 
-async def main():
+async def main() -> None:
     csv_path, action_name, source_tag = await get_inputs()
 
     async with async_playwright() as p:

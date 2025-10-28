@@ -5,7 +5,7 @@ from patchright.async_api import async_playwright
 from src.main import fill_form
 
 
-async def test_fill_form():
+async def test_fill_form() -> None:
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
         page = await browser.new_page()
