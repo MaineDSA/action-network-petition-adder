@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+from contextlib import asynccontextmanager
 from csv import DictReader
 from enum import Enum
 from pathlib import Path
@@ -9,6 +10,7 @@ from random import SystemRandom
 
 from patchright.async_api import Page, async_playwright
 from tqdm import tqdm
+from typing_extensions import AsyncGenerator
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -56,13 +58,21 @@ async def get_signers_from_csv(csv_path: Path) -> list[dict[str, str]]:
         return list(DictReader(file))
 
 
-async def main() -> None:
-    csv_path, action_name, source_tag = await get_inputs()
-
+@asynccontextmanager
+async def browser_context() -> AsyncGenerator[Page]:
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=False)
         page = await browser.new_page()
+        try:
+            yield page
+        finally:
+            await browser.close()
 
+
+async def main() -> None:
+    csv_path, action_name, source_tag = await get_inputs()
+
+    async with browser_context() as page:
         signers = await get_signers_from_csv(csv_path)
         for signer in tqdm(signers, unit="signer"):
             action_url = f"https://actionnetwork.org/{ActionType.PETITION}s/{action_name}?kiosk=true"
@@ -70,8 +80,6 @@ async def main() -> None:
                 action_url = f"{action_url}&source={source_tag}"
             await page.goto(action_url)
             await fill_form(page, signer)
-
-        await browser.close()
 
 
 if __name__ == "__main__":
