@@ -45,7 +45,7 @@ async def fill_form(page: Page, data: dict[str, str]) -> None:
 async def get_inputs() -> tuple[Path, str, str]:
     """Collect path, action name, and source tag via user input."""
     csv_path = input("What's the path to the CSV file? ")
-    action_name = input("What's the name of the petition? (The part after 'actionnetwork.org/petitions/') ")
+    action_name = input("What's the name of the action? (The part after 'actionnetwork.org/petitions/') ")
     source_tag = input("What source tag should be used? (Such as 'paper') ")
     return Path(csv_path), action_name, source_tag
 
