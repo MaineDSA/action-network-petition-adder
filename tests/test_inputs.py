@@ -12,8 +12,17 @@ async def test_get_inputs() -> None:
     known_action_name = "my-petition"
     known_source_tag = "paper"
 
-    # Mock the input() calls with predetermined values
-    with patch("builtins.input", side_effect=[known_csv_path, known_action_name, known_source_tag]):
+    def mock_input(prompt: str) -> str:
+        if "path to the CSV file" in prompt:
+            return str(known_csv_path)
+        if "name of the action" in prompt:
+            return known_action_name
+        if "source tag" in prompt:
+            return known_source_tag
+        msg = f"Unexpected prompt: {prompt}"
+        raise ValueError(msg)
+
+    with patch("builtins.input", side_effect=mock_input):
         csv_path, action_name, source_tag = await get_inputs()
 
         assert csv_path == known_csv_path
