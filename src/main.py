@@ -42,7 +42,7 @@ async def fill_form(page: Page, data: dict[str, str]) -> None:
         logger.debug("No error message appeared")
 
 
-async def get_inputs() -> tuple[Path, str, str]:
+async def get_inputs() -> tuple[Path, str, str | None]:
     """Collect path, action name, and source tag via user input."""
     csv_path = input("What's the path to the CSV file? ")
     action_name = input("What's the name of the action? (The part after 'actionnetwork.org/petitions/') ")
