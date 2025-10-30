@@ -61,7 +61,7 @@ async def get_signers_from_csv(csv_path: Path) -> list[dict[str, str]]:
 @asynccontextmanager
 async def browser_context() -> AsyncGenerator[Page]:
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=False)
+        browser = await p.chromium.launch(headless=True)
         page = await browser.new_page()
         try:
             yield page
