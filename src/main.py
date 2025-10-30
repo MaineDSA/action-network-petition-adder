@@ -71,13 +71,13 @@ async def browser_context() -> AsyncGenerator[Page]:
 
 async def main() -> None:
     csv_path, action_name, source_tag = await get_inputs()
+    action_url = f"https://actionnetwork.org/{ActionType.PETITION}s/{action_name}?kiosk=true"
+    if source_tag:
+        action_url = f"{action_url}&source={source_tag}"
 
     async with browser_context() as page:
         signers = await get_signers_from_csv(csv_path)
         for signer in tqdm(signers, unit="signer"):
-            action_url = f"https://actionnetwork.org/{ActionType.PETITION}s/{action_name}?kiosk=true"
-            if source_tag:
-                action_url = f"{action_url}&source={source_tag}"
             await page.goto(action_url)
             await fill_form(page, signer)
 
