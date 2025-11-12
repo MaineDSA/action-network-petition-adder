@@ -23,7 +23,7 @@ dev = [
     "types-tqdm==4.67.0.20250809"
 ]
 github-actions = [
-    "coverage==7.11.0",
+    "coverage==7.11.3",
     "pytest-cov==7.0.0",
 ]
 
