@@ -25,15 +25,9 @@ class ActionType(Enum):
     FORM = "form"
 
 
-async def fill_form(page: Page, data: dict[str, str]) -> None:
-    """Fill form fields at provided action network page with provided data."""
-    # Fill in the form fields
-    for key, value in data.items():
-        await page.locator(f"#form-{key}").fill(value)
-
-    wait_time = cryptogen.randint(500, 3000)
-    await page.wait_for_timeout(wait_time)
-
+async def submit_form(page: Page) -> None:
+    """Click submit form button and check for error message."""
+    logger.info("Submitting action")
     await page.locator("[type=submit]").click()
 
     error_element = page.locator("#error_message")
@@ -41,7 +35,62 @@ async def fill_form(page: Page, data: dict[str, str]) -> None:
     if style_attr and "display: list-item;" in style_attr:
         logger.warning("Error message appeared: %s", await error_element.text_content())
     else:
-        logger.debug("No error message appeared")
+        logger.info("No error message appeared")
+
+
+async def affirmative_opt_in(page: Page, data: dict[str, str]) -> None:
+    """Select appropriate option when presented with affirmative opt-in choice."""
+    if not page.locator(".js-affirmative_optin_control_group"):
+        return
+    logger.info("Action requires affirmative opt-in")
+    if "opt_in" in data and data["opt-in"] != "":
+        await page.locator(selector=".js-affirmative_optin_radio").first.click()
+        logger.info("Submitting with subscription")
+    else:
+        await page.locator(selector=".js-affirmative_optin_radio_no").click()
+        logger.info("Submitting without subscription")
+
+
+async def fill_field(page: Page, field_name: str, field_value: str) -> None:
+    """Fill in data in form field."""
+    # Don't treat opt_in data as fillable form field
+    if field_name == "opt_in":
+        return
+    form_field = page.locator(f"#form-{field_name}")
+    if not form_field:
+        logger.warning("Action does not contain %s field", field_name)
+        return
+    logger.info("Filling %s field", field_name)
+    await form_field.fill(field_value)
+
+
+async def fill_form(page: Page, signer_data: dict[str, str]) -> None:
+    """Fill form fields at provided action network page with provided data."""
+    for field_name, field_value in signer_data.items():
+        await fill_field(page, field_name, field_value)
+
+    wait_time = cryptogen.randint(500, 3000)
+    await page.wait_for_timeout(wait_time)
+    await affirmative_opt_in(page, signer_data)
+    await submit_form(page)
+
+
+@asynccontextmanager
+async def browser_context() -> AsyncGenerator[Page]:
+    """Launch browser via playwright, yield page, close browser when done."""
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=False)
+        page = await browser.new_page()
+        try:
+            yield page
+        finally:
+            await browser.close()
+
+
+async def get_signers_from_csv(csv_path: Path) -> list[dict[str, str]]:
+    """Load signer data from CSV and return it as a list of dicts."""
+    with csv_path.open() as file:
+        return list(DictReader(file))
 
 
 async def get_inputs() -> tuple[Path, str, str | None]:
@@ -52,31 +101,14 @@ async def get_inputs() -> tuple[Path, str, str | None]:
     return Path(csv_path), action_name, source_tag
 
 
-async def get_signers_from_csv(csv_path: Path) -> list[dict[str, str]]:
-    """Load signer data from CSV and return it as a list of dicts."""
-    with csv_path.open() as file:
-        return list(DictReader(file))
-
-
-@asynccontextmanager
-async def browser_context() -> AsyncGenerator[Page]:
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        page = await browser.new_page()
-        try:
-            yield page
-        finally:
-            await browser.close()
-
-
 async def main() -> None:
     csv_path, action_name, source_tag = await get_inputs()
-    action_url = f"https://actionnetwork.org/{ActionType.PETITION}s/{action_name}?kiosk=true"
+    action_url = f"https://actionnetwork.org/{ActionType.PETITION.value}s/{action_name}?kiosk=true"
     if source_tag:
         action_url = f"{action_url}&source={source_tag}"
 
+    signers = await get_signers_from_csv(csv_path)
     async with browser_context() as page:
-        signers = await get_signers_from_csv(csv_path)
         for signer in tqdm(signers, unit="signer"):
             await page.goto(action_url)
             await fill_form(page, signer)
