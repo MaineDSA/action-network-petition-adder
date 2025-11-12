@@ -19,7 +19,7 @@ dev = [
     "pytest-cov==7.0.0",
     "pytest-xdist==3.8.0",
     "pytest==9.0.0",
-    "ruff==0.14.1",
+    "ruff==0.14.4",
     "types-tqdm==4.67.0.20250809"
 ]
 github-actions = [
