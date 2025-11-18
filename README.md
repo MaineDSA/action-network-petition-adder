@@ -6,3 +6,8 @@
 adds csv of signers to an action network petition via kiosk mode
 csv file must have column names corresponding to the field names in action network
 field names in action network that aren't found in the csv will be left blank
+
+## email updates opt in
+
+The default behavior is to opt all signatories out of email updates. 
+To opt signatories in to email updates, add a column with header ```opt_in``` and for each row to opt in to email updates, ensure that cell is not an empty string
