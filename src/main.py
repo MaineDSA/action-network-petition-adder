@@ -44,7 +44,7 @@ async def affirmative_opt_in(page: Page, data: dict[str, str]) -> None:
         logger.info("Action does not require affirmative opt-in")
         return
     logger.info("Action requires affirmative opt-in")
-    if "opt_in" in data and data["opt_in"] != "":
+    if "opt_in" in data and data["opt_in"].lower() not in ["", "no"]:
         await page.locator("input[class*='affirmative_optin_radio']").first.check()
         logger.info("Submitting with subscription")
     else:

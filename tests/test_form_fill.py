@@ -40,6 +40,7 @@ async def test_fill_form() -> None:
     [
         ({"first_name": "Test", "last_name": "User", "email": "test@example.com", "zip_code": "04101"}, False),
         ({"first_name": "Test", "last_name": "User", "email": "test@example.com", "zip_code": "04101", "opt_in": ""}, False),
+        ({"first_name": "Test", "last_name": "User", "email": "test@example.com", "zip_code": "04101", "opt_in": "no"}, False),
         ({"first_name": "Test", "last_name": "User", "email": "test@example.com", "zip_code": "04101", "opt_in": "x"}, True),
         ({"first_name": "Test", "last_name": "User", "email": "test@example.com", "zip_code": "04101", "opt_in": "yes"}, True),
         (
@@ -55,9 +56,10 @@ async def test_fill_form() -> None:
     ],
     ids=[
         "missing opt_in column",
-        "explicit non-opt-in",
-        "explicit opt-in (x)",
-        "explicit opt-in (yes)",
+        "explicit non-opt-in (blank)",
+        "explicit non-opt-in ('no')",
+        "explicit opt-in ('x')",
+        "explicit opt-in ('yes')",
         "explicit opt-in (random string)",
     ],
 )
