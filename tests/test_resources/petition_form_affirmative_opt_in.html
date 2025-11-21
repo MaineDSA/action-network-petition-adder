@@ -37,19 +37,30 @@
             <li>
                 <input class="mt10 mb20" name="commit" type="submit" value="Add Your Name">
             </li>
-            <li class="control-group js-affirmative_optin_control_group nomt">
-      		  <label class="control-label check_radio_label noml nomt nomb">If you are not already subscribed, would you like to receive email updates from us? *</label>
-      		  <span class="controls check_radio_field">
-      		    <label class="radio noml nomb mt5">
-      				<input type="radio" name="subscription[group]" value="135664" class="js-affirmative_optin_radio required">
-      				Yes, opt in to email updates
-      		    </label>
-      		    <label class="radio noml nomt">
-      		    	<input type="radio" name="subscription[group]" value="invalid" class="js-affirmative_optin_radio js-affirmative_optin_radio_no required">
-                    No, do not opt in
-      		    </label>
-      		  </span>
-            </li>
+            <li id="d_sharing" class="js-d_sharing affirmative_optin_d_sharing">
+                <ul class="nomb">
+                    <li class="control-group js-affirmative_optin_control_group nomt">
+              		  <label class="control-label check_radio_label noml nomt nomb">If you are not already subscribed, would you like to receive email updates from us? *</label>
+              		  <span class="controls check_radio_field">
+              		    <label class="radio noml nomb mt5">
+              				<input type="radio" name="subscription[group]" value="135664" class="js-affirmative_optin_radio required">
+              				Yes, opt in to email updates
+              		    </label>
+              		    <label class="radio noml nomt">
+              		    	<input type="radio" name="subscription[group]" value="invalid" class="js-affirmative_optin_radio js-affirmative_optin_radio_no required">
+                        No, do not opt in
+              		    </label>
+              		  </span>
+              		  <input type="hidden" name="subscription[sub_group_id]" value="666666">
+              		  <input type="hidden" name="subscription[additional_groups]" value="[000000, 123456]">
+              		</li>
+                  <div class="affirmative_note">
+              	    <small><em>Note: If you subscribed earlier, this will not unsubscribe you. You can unsubscribe using the link provided in emails you receive. You can always take action without opting in.</em></small>
+                  </div>
+                  <input type="hidden" name="subscription[http_referer]" value="">
+                  <input id="subscription_source" name="subscription[source]" type="hidden" value="">
+                </ul>
+              </li>
             <li id="error_message" class="js-error_message"></li>
         </ul>
     </div>

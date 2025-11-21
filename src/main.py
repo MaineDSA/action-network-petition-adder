@@ -12,7 +12,7 @@ from patchright.async_api import Page, async_playwright
 from tqdm import tqdm
 from typing_extensions import AsyncGenerator
 
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 cryptogen = SystemRandom()
@@ -40,7 +40,7 @@ async def submit_form(page: Page) -> None:
 
 async def affirmative_opt_in(page: Page, data: dict[str, str]) -> None:
     """Select appropriate option when presented with affirmative opt-in choice."""
-    if not await page.locator("li[class*='affirmative_optin_d_sharing']").is_visible():
+    if not await page.locator("li[class*='affirmative_optin_d_sharing']").count():
         logger.info("Action does not require affirmative opt-in")
         return
     logger.info("Action requires affirmative opt-in")
