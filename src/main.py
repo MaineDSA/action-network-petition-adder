@@ -12,7 +12,7 @@ from patchright.async_api import Page, async_playwright
 from tqdm import tqdm
 from typing_extensions import AsyncGenerator
 
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 cryptogen = SystemRandom()
@@ -40,14 +40,15 @@ async def submit_form(page: Page) -> None:
 
 async def affirmative_opt_in(page: Page, data: dict[str, str]) -> None:
     """Select appropriate option when presented with affirmative opt-in choice."""
-    if not page.locator(".js-affirmative_optin_control_group"):
+    if not await page.locator("li[class*='affirmative_optin_d_sharing']").count():
+        logger.info("Action does not require affirmative opt-in")
         return
     logger.info("Action requires affirmative opt-in")
     if "opt_in" in data and data["opt_in"] != "":
-        await page.locator(selector=".js-affirmative_optin_radio").first.click()
+        await page.locator("input[class*='affirmative_optin_radio']").first.check()
         logger.info("Submitting with subscription")
     else:
-        await page.locator(selector=".js-affirmative_optin_radio_no").click()
+        await page.locator("input[class*='affirmative_optin_radio_no']").first.check()
         logger.info("Submitting without subscription")
 
 
@@ -76,10 +77,10 @@ async def fill_form(page: Page, signer_data: dict[str, str]) -> None:
 
 
 @asynccontextmanager
-async def browser_context() -> AsyncGenerator[Page]:
+async def browser_context(*, headless: bool = False) -> AsyncGenerator[Page]:
     """Launch browser via playwright, yield page, close browser when done."""
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=False)
+        browser = await p.chromium.launch(headless=headless)
         page = await browser.new_page()
         try:
             yield page
