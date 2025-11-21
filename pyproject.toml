@@ -1,7 +1,7 @@
 [project]
 name = "action-network-petition-adder"
 version = "0.4.0"
-description = "adds csv of signers to an action network petition via kiosk mode"
+description = "add activists from csv to an action network action"
 readme = "README.md"
 license = { "file" = "LICENSE" }
 requires-python = ">=3.11"
