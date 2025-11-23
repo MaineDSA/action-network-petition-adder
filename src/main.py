@@ -12,7 +12,7 @@ from patchright.async_api import Page, async_playwright
 from tqdm import tqdm
 from typing_extensions import AsyncGenerator
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
 cryptogen = SystemRandom()
