@@ -40,12 +40,12 @@ jobs:
 
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
 
-      - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
+      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
 
-      - uses: install-pinned/uv@3b52ff50f07de12f5ebcdd31d078466611a008a6
+      - uses: install-pinned/uv@aa380d2c49f39e53fe6f5635484bb766098ba8b4
 
       - run: |
           uv pip install --system --resolution ${{ matrix.resolution }} -e .[dev]
@@ -84,12 +84,12 @@ jobs:
 
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
 
-      - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
+      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
         with:
           python-version: 3.13
           cache: pip
 
-      - uses: install-pinned/uv@3b52ff50f07de12f5ebcdd31d078466611a008a6
+      - uses: install-pinned/uv@aa380d2c49f39e53fe6f5635484bb766098ba8b4
 
       - run: uv pip install --system .[dev]
 
@@ -121,12 +121,12 @@ jobs:
 
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
 
-      - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
+      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
         with:
           python-version: 3.13
           cache: pip
 
-      - uses: install-pinned/uv@3b52ff50f07de12f5ebcdd31d078466611a008a6
+      - uses: install-pinned/uv@aa380d2c49f39e53fe6f5635484bb766098ba8b4
 
       - run: uv pip install --system .[dev]
 
@@ -140,7 +140,7 @@ jobs:
         run: |
           ruff check --output-format=sarif -o results.sarif .
 
-      - uses: github/codeql-action/upload-sarif@e12f0178983d466f2f6028f5cc7a6d786fd97f4b
+      - uses: github/codeql-action/upload-sarif@fdbfb4d2750291e159f0156def62b853c2798ca2
         if: ( success() || failure() ) && contains('["success", "failure"]', steps.run-ruff-sarif.outcome)
         with:
           sarif_file: results.sarif
@@ -170,12 +170,12 @@ jobs:
 
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
 
-      - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
+      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
         with:
           python-version: 3.13
           cache: pip
 
-      - uses: install-pinned/uv@3b52ff50f07de12f5ebcdd31d078466611a008a6
+      - uses: install-pinned/uv@aa380d2c49f39e53fe6f5635484bb766098ba8b4
 
       - run: uv pip install --system .[dev]
 
@@ -183,7 +183,7 @@ jobs:
         run: |
           bandit --confidence-level 'medium' --severity-level 'medium' --recursive 'src' --format 'sarif' --output 'results.sarif'
 
-      - uses: github/codeql-action/upload-sarif@e12f0178983d466f2f6028f5cc7a6d786fd97f4b
+      - uses: github/codeql-action/upload-sarif@fdbfb4d2750291e159f0156def62b853c2798ca2
         if: ( success() || failure() ) && contains('["success", "failure"]', steps.run-bandit-sarif.outcome)
         with:
           sarif_file: results.sarif
@@ -209,12 +209,12 @@ jobs:
 
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
 
-      - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
+      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
         with:
           python-version: '3.13'
           cache: pip
 
-      - uses: install-pinned/uv@3b52ff50f07de12f5ebcdd31d078466611a008a6
+      - uses: install-pinned/uv@aa380d2c49f39e53fe6f5635484bb766098ba8b4
 
       - run: uv pip install --system -e .[dev]
 
@@ -286,12 +286,12 @@ jobs:
 
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
 
-      - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
+      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
         with:
           python-version: 3.13
           cache: pip
 
-      - uses: install-pinned/uv@3b52ff50f07de12f5ebcdd31d078466611a008a6
+      - uses: install-pinned/uv@aa380d2c49f39e53fe6f5635484bb766098ba8b4
 
       - run: uv pip install --system .[dev]
 
