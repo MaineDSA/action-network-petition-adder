@@ -33,19 +33,19 @@ jobs:
       contents: write
 
     steps:
-      - uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2
+      - uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76
         with:
           disable-sudo: true
           egress-policy: audit
 
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
       - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
 
-      - uses: install-pinned/uv@aa380d2c49f39e53fe6f5635484bb766098ba8b4
+      - uses: install-pinned/uv@11f74804a57071469d29edb1b672876bf45e8fa8
 
       - run: |
           uv pip install --system --resolution ${{ matrix.resolution }} -e .[dev]
@@ -63,7 +63,7 @@ jobs:
         env:
           COVERAGE_FILE: ".coverage.${{ matrix.os }}.${{ matrix.python-version }}.${{ matrix.resolution }}"
 
-      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: coverage-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.resolution }}
           path: .coverage.${{ matrix.os }}.${{ matrix.python-version }}.${{ matrix.resolution }}
@@ -73,7 +73,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2
+      - uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76
         with:
           disable-sudo: true
           egress-policy: block
@@ -82,14 +82,14 @@ jobs:
             github.com:443
             pypi.org:443
 
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
       - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
         with:
           python-version: 3.13
           cache: pip
 
-      - uses: install-pinned/uv@aa380d2c49f39e53fe6f5635484bb766098ba8b4
+      - uses: install-pinned/uv@11f74804a57071469d29edb1b672876bf45e8fa8
 
       - run: uv pip install --system .[dev]
 
@@ -109,7 +109,7 @@ jobs:
       security-events: write
 
     steps:
-      - uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2
+      - uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76
         with:
           disable-sudo: true
           egress-policy: block
@@ -119,14 +119,14 @@ jobs:
             github.com:443
             pypi.org:443
 
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
       - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
         with:
           python-version: 3.13
           cache: pip
 
-      - uses: install-pinned/uv@aa380d2c49f39e53fe6f5635484bb766098ba8b4
+      - uses: install-pinned/uv@11f74804a57071469d29edb1b672876bf45e8fa8
 
       - run: uv pip install --system .[dev]
 
@@ -140,7 +140,7 @@ jobs:
         run: |
           ruff check --output-format=sarif -o results.sarif .
 
-      - uses: github/codeql-action/upload-sarif@fdbfb4d2750291e159f0156def62b853c2798ca2
+      - uses: github/codeql-action/upload-sarif@1b168cd39490f61582a9beae412bb7057a6b2c4e
         if: ( success() || failure() ) && contains('["success", "failure"]', steps.run-ruff-sarif.outcome)
         with:
           sarif_file: results.sarif
@@ -158,7 +158,7 @@ jobs:
       security-events: write
 
     steps:
-      - uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2
+      - uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76
         with:
           disable-sudo: true
           egress-policy: block
@@ -168,14 +168,14 @@ jobs:
             github.com:443
             pypi.org:443
 
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
       - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
         with:
           python-version: 3.13
           cache: pip
 
-      - uses: install-pinned/uv@aa380d2c49f39e53fe6f5635484bb766098ba8b4
+      - uses: install-pinned/uv@11f74804a57071469d29edb1b672876bf45e8fa8
 
       - run: uv pip install --system .[dev]
 
@@ -183,7 +183,7 @@ jobs:
         run: |
           bandit --confidence-level 'medium' --severity-level 'medium' --recursive 'src' --format 'sarif' --output 'results.sarif'
 
-      - uses: github/codeql-action/upload-sarif@fdbfb4d2750291e159f0156def62b853c2798ca2
+      - uses: github/codeql-action/upload-sarif@1b168cd39490f61582a9beae412bb7057a6b2c4e
         if: ( success() || failure() ) && contains('["success", "failure"]', steps.run-bandit-sarif.outcome)
         with:
           sarif_file: results.sarif
@@ -198,7 +198,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2
+      - uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76
         with:
           disable-sudo: true
           egress-policy: block
@@ -207,14 +207,14 @@ jobs:
             github.com:443
             pypi.org:443
 
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
       - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
         with:
           python-version: '3.13'
           cache: pip
 
-      - uses: install-pinned/uv@aa380d2c49f39e53fe6f5635484bb766098ba8b4
+      - uses: install-pinned/uv@11f74804a57071469d29edb1b672876bf45e8fa8
 
       - run: uv pip install --system -e .[dev]
 
@@ -235,7 +235,7 @@ jobs:
       contents: write
 
     steps:
-      - uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2
+      - uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76
         with:
           disable-sudo: true
           egress-policy: block
@@ -255,7 +255,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MERGE_COVERAGE_FILES: true
 
-      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         if: steps.coverage_comment.outputs.COMMENT_FILE_WRITTEN == 'true'
         with:
           name: python-coverage-comment-action
@@ -272,7 +272,7 @@ jobs:
       contents: write
 
     steps:
-      - uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2
+      - uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76
         with:
           disable-sudo: true
           egress-policy: block
@@ -282,14 +282,14 @@ jobs:
             proxy.golang.org:443
             pypi.org:443
 
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
       - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
         with:
           python-version: 3.13
           cache: pip
 
-      - uses: install-pinned/uv@aa380d2c49f39e53fe6f5635484bb766098ba8b4
+      - uses: install-pinned/uv@11f74804a57071469d29edb1b672876bf45e8fa8
 
       - run: uv pip install --system .[dev]
 
