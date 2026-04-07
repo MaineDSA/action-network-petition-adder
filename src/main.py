@@ -2,13 +2,15 @@
 
 import asyncio
 import logging
+import tempfile
 from contextlib import asynccontextmanager
 from csv import DictReader
 from enum import Enum
 from pathlib import Path
 from random import SystemRandom
+from typing import Any
 
-from patchright.async_api import Page, async_playwright
+from patchright.async_api import BrowserContext, Page, async_playwright
 from tqdm import tqdm
 from typing_extensions import AsyncGenerator
 
@@ -77,15 +79,38 @@ async def fill_form(page: Page, signer_data: dict[str, str]) -> None:
 
 
 @asynccontextmanager
-async def browser_context(*, headless: bool = False) -> AsyncGenerator[Page]:
-    """Launch browser via playwright, yield page, close browser when done."""
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=headless)
-        page = await browser.new_page()
-        try:
-            yield page
-        finally:
-            await browser.close()
+async def create_browser_context(*, headless: bool = False) -> AsyncGenerator[BrowserContext, Any]:
+    """Create and configure browser with Patchright's stealth mode."""
+    with tempfile.TemporaryDirectory(prefix="patchright_") as temp_dir:
+        async with async_playwright() as p:
+            context = await p.chromium.launch_persistent_context(
+                user_data_dir=temp_dir,
+                channel="chrome",
+                headless=headless,
+                no_viewport=True,
+            )
+
+            try:
+                yield context
+            finally:
+                await context.close()
+
+
+@asynccontextmanager
+async def get_browser_page(context: BrowserContext, *, require_new_page: bool = False) -> AsyncGenerator[Page, Any]:
+    """Create a browser page ready to use."""
+    # Reuse existing page if available, otherwise create new one
+    pages = context.pages
+    if pages and not require_new_page:
+        page = pages[0]
+    else:
+        page = await context.new_page()
+
+    try:
+        yield page
+    finally:
+        await context.new_page()
+        await page.close()
 
 
 async def get_signers_from_csv(csv_path: Path) -> list[dict[str, str]]:
@@ -109,7 +134,7 @@ async def main() -> None:
         action_url = f"{action_url}&source={source_tag}"
 
     signers = await get_signers_from_csv(csv_path)
-    async with browser_context() as page:
+    async with create_browser_context() as context, get_browser_page(context) as page:
         for signer in tqdm(signers, unit="signer"):
             await page.goto(action_url)
             await fill_form(page, signer)
