@@ -9,6 +9,7 @@ from enum import StrEnum
 from pathlib import Path
 from random import SystemRandom
 from typing import Any
+from urllib.parse import urlencode, urlunsplit
 
 from patchright.async_api import BrowserContext, Page, async_playwright
 from tqdm import tqdm
@@ -129,9 +130,22 @@ async def get_inputs() -> tuple[Path, str, str | None]:
 
 async def main() -> None:
     csv_path, action_name, source_tag = await get_inputs()
-    action_url = f"https://actionnetwork.org/{ActionType.PETITION}s/{action_name}?kiosk=true"
+
+    params = {"kiosk": "true"}
     if source_tag:
-        action_url = f"{action_url}&source={source_tag}"
+        params["source"] = source_tag
+    query = urlencode(params)
+
+    action_url = urlunsplit(
+        (
+            "https",
+            "actionnetwork.org",
+            f"/{ActionType.PETITION}s",
+            f"/{action_name}",
+            query,
+            "",
+        )
+    )
 
     signers = await get_signers_from_csv(csv_path)
     async with create_browser_context() as context, get_browser_page(context) as page:
