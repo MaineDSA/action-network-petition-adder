@@ -1,14 +1,15 @@
+default_stages: [pre-commit]
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
-      - id: check-yaml
-      - id: check-ast
-      - id: check-builtin-literals
-      - id: check-case-conflict
-      - id: check-docstring-first
-      - id: check-executables-have-shebangs
       - id: check-toml
+      - id: check-yaml
+      - id: check-builtin-literals
+      - id: check-executables-have-shebangs
+      - id: check-case-conflict
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
       - id: debug-statements
       - id: mixed-line-ending
 
@@ -16,35 +17,32 @@ repos:
     hooks:
       - id: bandit
         name: bandit
-        entry: uv run bandit --confidence-level 'medium' --severity-level 'medium' --exclude test
+        entry: uv run bandit
+        args: [--confidence-level medium, --severity-level medium, --exclude tests]
         language: system
         pass_filenames: true
-        types: ['python']
-
-      - id: ssort
-        name: ssort
-        entry: uv run ssort --check
-        language: system
-        pass_filenames: true
-        types: ['python']
+        types: [python, toml]
 
       - id: ruff-check
         name: ruff check
-        entry: uv run ruff check --fix
+        entry: uv run ruff check
+        args: [--fix]
         language: system
         pass_filenames: true
-        types: ['python']
+        types: [python, toml]
 
       - id: ruff-format
         name: ruff format
         entry: uv run ruff format
         language: system
         pass_filenames: true
-        types: ['python']
+        types: [python, toml]
 
-      - id: ty-check
-        name: ty check
-        entry: uv run ty check
+      - id: pytest
+        name: pytest
+        entry: uv run pytest
         language: system
-        pass_filenames: true
-        types: ['python']
+        always_run: true
+        pass_filenames: false
+        stages: [pre-push]
+        types: [python, toml]
