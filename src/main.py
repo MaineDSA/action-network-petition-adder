@@ -5,7 +5,7 @@ import logging
 import tempfile
 from contextlib import asynccontextmanager
 from csv import DictReader
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from random import SystemRandom
 from typing import Any
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 cryptogen = SystemRandom()
 
 
-class ActionType(Enum):
+class ActionType(StrEnum):
     """Supported Action Network Action Types."""
 
     PETITION = "petition"
@@ -129,7 +129,7 @@ async def get_inputs() -> tuple[Path, str, str | None]:
 
 async def main() -> None:
     csv_path, action_name, source_tag = await get_inputs()
-    action_url = f"https://actionnetwork.org/{ActionType.PETITION.value}s/{action_name}?kiosk=true"
+    action_url = f"https://actionnetwork.org/{ActionType.PETITION}s/{action_name}?kiosk=true"
     if source_tag:
         action_url = f"{action_url}&source={source_tag}"
 
