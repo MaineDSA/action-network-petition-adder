@@ -122,7 +122,7 @@ async def get_signers_from_csv(csv_path: Path) -> list[dict[str, str]]:
 async def get_inputs() -> tuple[Path, str, str | None]:
     """Collect path, action name, and source tag via user input."""
     csv_path = input("What's the path to the CSV file? ")
-    action_name = input("What's the name of the action? (The part after 'actionnetwork.org/petitions/') ")
+    action_name = input("What's the name of the action? (The part after 'actionnetwork.org/petitions/') ")  # should match [A-Za-z0-9\-]+
     source_tag = input("What source tag should be used? (Such as 'paper'; leave blank for no source tag) ")
     return Path(csv_path), action_name, source_tag
 
