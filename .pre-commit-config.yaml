@@ -2,13 +2,13 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
-      - id: check-yaml
-      - id: check-ast
-      - id: check-builtin-literals
-      - id: check-case-conflict
-      - id: check-docstring-first
-      - id: check-executables-have-shebangs
       - id: check-toml
+      - id: check-yaml
+      - id: check-builtin-literals
+      - id: check-executables-have-shebangs
+      - id: check-case-conflict
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
       - id: debug-statements
       - id: mixed-line-ending
 
