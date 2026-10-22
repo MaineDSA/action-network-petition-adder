@@ -102,13 +102,12 @@ async def get_browser_page(context: BrowserContext, *, require_new_page: bool = 
     """Create a browser page ready to use."""
     # Reuse existing page if available, otherwise create new one
     pages = context.pages
-    if pages and not require_new_page:
-        page = pages[0]
-    else:
-        page = await context.new_page()
+    should_create_page = not pages or require_new_page
+    page = await context.new_page() if should_create_page else pages[0]
 
     try:
         yield page
+
     finally:
         await context.new_page()
         await page.close()
