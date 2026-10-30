@@ -127,26 +127,21 @@ async def get_inputs() -> tuple[Path, str, str | None]:
     return Path(csv_path), action_name, source_tag
 
 
-async def main() -> None:
-    csv_path, action_name, source_tag = await get_inputs()
-
+async def get_action_url(action_type: ActionType, action_name: str, source_tag: str | None) -> str:
+    """Assemble the URL of the action to add data to."""
     params = {"kiosk": "true"}
     if source_tag:
         params["source"] = source_tag
     query = urlencode(params)
 
-    action_url = urlunsplit(
-        (
-            "https",
-            "actionnetwork.org",
-            f"/{ActionType.PETITION}s",
-            f"/{action_name}",
-            query,
-            "",
-        )
-    )
+    return urlunsplit(("https", "actionnetwork.org", f"/{action_type}s", f"/{action_name}", query, ""))
 
+
+async def main() -> None:
+    csv_path, action_name, source_tag = await get_inputs()
+    action_url = await get_action_url(ActionType.PETITION, action_name, source_tag)
     signers = await get_signers_from_csv(csv_path)
+
     async with create_browser_context() as context, get_browser_page(context) as page:
         for signer in tqdm(signers, unit="signer"):
             await page.goto(action_url)
