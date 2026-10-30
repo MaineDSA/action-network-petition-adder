@@ -134,7 +134,7 @@ async def get_action_url(action_type: ActionType, action_name: str, source_tag: 
         params["source"] = source_tag
     query = urlencode(params)
 
-    return urlunsplit(("https", "actionnetwork.org", f"/{action_type}s", f"/{action_name}", query, ""))
+    return urlunsplit(("https", "actionnetwork.org", f"/{action_type}s", f"/{action_name}", query))
 
 
 async def main() -> None:
