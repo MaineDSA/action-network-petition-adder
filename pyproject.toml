@@ -27,7 +27,7 @@ dev = [
 ]
 lint = [
     "ruff~=0.17.2",
-    "ssort~=0.17.0",
+    "ssort>=0.17,<0.20",
 ]
 pre-commit = [
     "pre-commit>=4.7",
